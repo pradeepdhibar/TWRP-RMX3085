@@ -22,13 +22,14 @@ if [ "$1" = "$FDEVICE" -o "$FOX_BUILD_DEVICE" = "$FDEVICE" ]; then
         export LC_ALL="C"
 
 	# Maintaining Info
-	export OF_MAINTAINER="AshBorn"
-	export FOX_VERSION=$(date +%y.%m.%d)
+	export OF_MAINTAINER="Pradeep Dhibar"
+	export FOX_MAINTAINER_PATCH_VERSION="1"
 	export FOX_BUILD_TYPE=Unofficial
 	
 	# Device Information
 	export FOX_ARCH=arm64
 	export FOX_VARIANT="A12.1"
+       export OF_USE_LZ4_COMPRESSION="1"
         export TARGET_DEVICE_ALT="RMX3085,ossi,RMX3085L1,nashc"
 
 	# Funtions
