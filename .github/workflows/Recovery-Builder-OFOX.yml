@@ -88,7 +88,11 @@ jobs:
         run: |
           cd "${GITHUB_WORKSPACE}/OrangeFox/fox_${FOX_BRANCH}"
 
+          # envsetup.sh may return a non-zero status while setting up the shell.
+          # GitHub Actions runs bash with -e, so temporarily disable errexit here.
+          set +e
           source build/envsetup.sh
+          set -e
 
           export FOX_BUILD_DEVICE="${DEVICE_NAME}"
           export OF_MAINTAINER="Pradeep Dhibar"
