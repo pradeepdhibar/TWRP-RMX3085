@@ -1,4 +1,4 @@
-name: Build OrangeFox - RMX3085 (nashc)
+name: Build OrangeFox - nashc
 
 on:
   workflow_dispatch:
@@ -18,10 +18,10 @@ concurrency:
 
 env:
   FOX_BRANCH: '12.1'
-  DEVICE_NAME: 'RMX3085'
-  DEVICE_PATH: 'device/realme/RMX3085'
+  DEVICE_NAME: 'nashc'
+  DEVICE_PATH: 'device/realme/nashc'
   BUILD_TARGET: 'recovery'
-  FOX_BUILD_DEVICE: 'RMX3085'
+  FOX_BUILD_DEVICE: 'nashc'
   OF_MAINTAINER: 'Pradeep Dhibar'
   FOX_MAINTAINER_PATCH_VERSION: '1'
   ALLOW_MISSING_DEPENDENCIES: 'true'
@@ -130,7 +130,7 @@ jobs:
         if: ${{ github.event.inputs.RELEASE_OR_ARTIFACT == 'artifact' }}
         uses: actions/upload-artifact@v4
         with:
-          name: OrangeFox-RMX3085-${{ env.BUILD_DATE }}
+          name: OrangeFox-nashc-${{ env.BUILD_DATE }}
           path: |
             OrangeFox/fox_${{ env.FOX_BRANCH }}/out/target/product/${{ env.DEVICE_NAME }}/OrangeFox*.img
             OrangeFox/fox_${{ env.FOX_BRANCH }}/out/target/product/${{ env.DEVICE_NAME }}/OrangeFox*.zip
@@ -142,11 +142,11 @@ jobs:
         if: ${{ github.event.inputs.RELEASE_OR_ARTIFACT == 'release' }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: OrangeFox-RMX3085-${{ env.BUILD_DATE }}-${{ github.run_number }}
-          name: OrangeFox R12.0_1 A12.1 - Realme 8 4G (RMX3085/nashc)
+          tag_name: OrangeFox-nashc-${{ env.BUILD_DATE }}-${{ github.run_number }}
+          name: OrangeFox R12.0_1 A12.1 - Realme 8 4G (nashc)
           generate_release_notes: false
           body: |
-            Unofficial OrangeFox Recovery for Realme 8 4G (RMX3085 / nashc)
+            Unofficial OrangeFox Recovery for Realme 8 4G (nashc)
 
             Maintainer: Pradeep Dhibar
             OrangeFox base: 12.1

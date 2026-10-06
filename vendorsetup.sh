@@ -1,4 +1,4 @@
-FDEVICE="RMX3085"
+FDEVICE="nashc"
 #set -o xtrace
 
 fox_get_target_device() {
@@ -30,7 +30,7 @@ if [ "$1" = "$FDEVICE" -o "$FOX_BUILD_DEVICE" = "$FDEVICE" ]; then
 	export FOX_ARCH=arm64
 	export FOX_VARIANT="A12.1"
        export OF_USE_LZ4_COMPRESSION="1"
-        export TARGET_DEVICE_ALT="RMX3085,ossi,RMX3085L1,nashc"
+        export TARGET_DEVICE_ALT="nashc,RMX3085,RMX3085L1,ossi"
 
 	# Funtions
 	export FOX_REPLACE_BUSYBOX_PS=1

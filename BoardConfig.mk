@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-DEVICE_PATH := device/realme/RMX3085
+DEVICE_PATH := device/realme/nashc
 
 # For building with minimal manifest
 ALLOW_MISSING_DEPENDENCIES := true
@@ -49,7 +49,7 @@ TARGET_USES_UEFI := true
 TARGET_BOARD_PLATFORM := MT6785
 
 # Assert
-TARGET_OTA_ASSERT_DEVICE := RMX3085,RMX3085L1,nashc
+TARGET_OTA_ASSERT_DEVICE := nashc,RMX3085,RMX3085L1
 
 # Kernel
 BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2

@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-LOCAL_PATH := device/realme/RMX3085
+LOCAL_PATH := device/realme/nashc
 
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
@@ -24,10 +24,10 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_keys.mk)
 # Inherit from our custom product configuration
 $(call inherit-product, vendor/twrp/config/common.mk)
 
-PRODUCT_DEVICE := RMX3085
-PRODUCT_NAME := twrp_RMX3085
+PRODUCT_DEVICE := nashc
+PRODUCT_NAME := twrp_nashc
 PRODUCT_BRAND := realme
-PRODUCT_MODEL := RMX3085
+PRODUCT_MODEL := NASHC
 PRODUCT_MANUFACTURER := realme
 
 # Shipping API level
