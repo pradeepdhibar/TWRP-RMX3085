@@ -1,8 +1,8 @@
 system /system ext4 ro wait,logical
 system_ext /system_ext ext4 ro wait,logical
-vendor /vendor ext4 ro wait,logical,
+vendor /vendor erofs ro wait,logical
 product /product ext4 ro wait,logical
-odm /odm ext4 ro wait,logical
+odm /odm erofs ro wait,logical
 
 
 /dev/block/by-name/metadata /metadata ext4 noatime,nosuid,nodev,discard wait,check,formattable
