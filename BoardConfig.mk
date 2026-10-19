@@ -146,11 +146,9 @@ TARGET_COPY_OUT_VENDOR := vendor
 BOARD_USES_METADATA_PARTITION := true
 BOARD_ROOT_EXTRA_FOLDERS += metadata
 
-# Hack: prevent anti rollback
-PLATFORM_SECURITY_PATCH := 2026-10-01
-VENDOR_SECURITY_PATCH := 2024-07-05
-PLATFORM_VERSION := 16.1.0
-PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
+# Multi-ROM recovery:
+# Do not force a ROM-specific Android version or security patch level.
+# Encryption compatibility must be validated against the installed ROM.
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_FBE := true
 TW_INCLUDE_FBE_METADATA_DECRYPT := true
