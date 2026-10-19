@@ -1,4 +1,4 @@
-name: Build OrangeFox - nashc
+name: Build OrangeFox - nashc Axion Trustonic TEST
 
 on:
   workflow_dispatch:
@@ -29,7 +29,7 @@ env:
 
 jobs:
   build:
-    name: OrangeFox R12.0_1 A12.1
+    name: OrangeFox R12.0_1 A12.1 Trustonic experiment
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -83,6 +83,58 @@ jobs:
           echo "Device tree commit:"
           git -C "${GITHUB_WORKSPACE}/device-tree" log -1 --oneline
 
+      - name: Stage AxionOS Trustonic blobs (EXPERIMENTAL)
+        shell: bash
+        run: |
+          set -euo pipefail
+          AXION_VENDOR="${GITHUB_WORKSPACE}/axion-vendor-for-trustonic"
+          DEST="${GITHUB_WORKSPACE}/device-tree/recovery/root/vendor/app/mcRegistry"
+          echo '===== FETCH MATCHING AXION VENDOR BLOBS ====='
+          git clone --depth=1 --filter=blob:none --sparse \
+            --branch axion-2.9-noesis-nashc \
+            https://github.com/pradeepdhibar/android_vendor_realme_nashc.git "$AXION_VENDOR"
+          git -C "$AXION_VENDOR" sparse-checkout set \
+            proprietary/vendor/app/mcRegistry \
+            proprietary/odm/vendor/app/mcRegistry
+          VENDOR="$AXION_VENDOR/proprietary/vendor/app/mcRegistry"
+          ODM="$AXION_VENDOR/proprietary/odm/vendor/app/mcRegistry"
+          test -d "$DEST" && test -d "$VENDOR" && test -d "$ODM"
+          test "$(find "$DEST" -maxdepth 1 -type f | wc -l)" -eq 52
+          echo '===== REPLACE 48 COMMON FILES; PRESERVE 4 RECOVERY-ONLY FILES ====='
+          cp -a "$VENDOR/." "$DEST/"
+          for f in "$ODM"/*; do
+            test -f "$f" || continue
+            n="${f##*/}"
+            test -f "$VENDOR/$n" && continue
+            cp -a "$f" "$DEST/$n"
+          done
+          echo '===== VERIFY BINARY CONTENT AGAINST AXION VENDOR ====='
+          same=0; different=0; extra=0
+          for f in "$DEST"/*; do
+            test -f "$f" || continue
+            n="${f##*/}"
+            if { test -f "$VENDOR/$n" && cmp -s "$f" "$VENDOR/$n"; } || \
+               { test -f "$ODM/$n" && cmp -s "$f" "$ODM/$n"; }; then
+              same=$((same + 1))
+            elif test -f "$VENDOR/$n" || test -f "$ODM/$n"; then
+              different=$((different + 1))
+              echo "FAIL mismatched: $n"
+            else
+              extra=$((extra + 1))
+              echo "Preserved recovery-only: $n"
+            fi
+          done
+          echo "Identical with vendor: $same; mismatched: $different; recovery-only: $extra"
+          test "$same" -eq 48 && test "$different" -eq 0 && test "$extra" -eq 4
+          echo '===== ARCHIVE EXPERIMENT PROVENANCE ====='
+          {
+            echo 'Experimental, NOT confirmed to decrypt Android 16 userdata.'
+            echo "Recovery device tree: ${GITHUB_SHA}"
+            echo "Axion vendor branch: axion-2.9-noesis-nashc"
+            echo "Axion vendor commit: $(git -C "$AXION_VENDOR" rev-parse HEAD)"
+            echo "Matched: $same; mismatched: $different; retained: $extra"
+          } > "${GITHUB_WORKSPACE}/TRUSTONIC-EXPERIMENT.txt"
+          echo 'PASS: Axion Trustonic vendor blobs staged into recovery device tree'
       - name: Build OrangeFox
         shell: bash
         run: |
@@ -127,19 +179,20 @@ jobs:
           echo "BUILD_DATE=$(TZ=Asia/Kolkata date +%Y%m%d-%H%M)" >> "${GITHUB_ENV}"
 
       - name: Upload build artifact
-        if: ${{ github.event.inputs.RELEASE_OR_ARTIFACT == 'artifact' }}
+        if: ${{ github.event.inputs.RELEASE_OR_ARTIFACT != 'release' }}
         uses: actions/upload-artifact@v4
         with:
-          name: OrangeFox-nashc-${{ env.BUILD_DATE }}
+          name: OrangeFox-nashc-AXION-TRUSTONIC-TEST-${{ env.BUILD_DATE }}
           path: |
             OrangeFox/fox_${{ env.FOX_BRANCH }}/out/target/product/${{ env.DEVICE_NAME }}/OrangeFox*.img
             OrangeFox/fox_${{ env.FOX_BRANCH }}/out/target/product/${{ env.DEVICE_NAME }}/OrangeFox*.zip
             OrangeFox/fox_${{ env.FOX_BRANCH }}/out/target/product/${{ env.DEVICE_NAME }}/SHA256SUMS.txt
+            TRUSTONIC-EXPERIMENT.txt
           if-no-files-found: error
           compression-level: 0
 
       - name: Create GitHub Release
-        if: ${{ github.event.inputs.RELEASE_OR_ARTIFACT == 'release' }}
+        if: ${{ false }} # Never publish an untested FBE experiment as a release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: OrangeFox-nashc-${{ env.BUILD_DATE }}-${{ github.run_number }}
